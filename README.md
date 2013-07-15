@@ -2,7 +2,8 @@ coldfusion / railo - db prototype engine - dbcore
 ======
 
 ### Why I built it
-Over building a user.cfc and feel the orm tech comes with too much overhead to build a prototype.  I want to add a column then ultize it straight away.  But the end game is more client side js less server side cf.
+I was over building a object.cfc and feel the orm/framework tech comes with too much overhead to build slick prototype.
+You should be able to add a column then ultize it straight away.  But the end game is more client side js less server side cf.
 
 ### Why use it?
 
