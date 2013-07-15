@@ -10,7 +10,7 @@
 			var lWant = '';
 			var result = '';
 
-			var queryOrderBy = 'ASC';
+			var queryOrderBy = '';
 			var querylimitBy = 10;
 
 			if (structKeyExists(arguments.stArguments, 'want')){
@@ -22,13 +22,18 @@
 			}
 
 			if (structKeyExists(arguments.stArguments, 'orderBy')){
-				queryOrderBy = arguments.stArguments.orderBy = 'ASC';
+				// heaps security risk... look for desc/asc or kick
+				queryOrderBy = arguments.stArguments.orderBy;
+			}
+
+			if (structKeyExists(arguments.stArguments, 'orderByTitle')){
+				queryOrderByTitle = arguments.stArguments.orderByTitle;
 			}
 		</cfscript>
 
 		<cfloop collection="#arguments.stArguments#" item="i">
 			<cfscript>
-				if ((i neq 'want') and (i neq 'limitBy') and (i neq 'orderBy')){
+				if ((i neq 'want') and (i neq 'limitBy') and (i neq 'orderBy') and (i neq 'orderByTitle')){
 					arrayAppend(aColumns, i);
 				}
 			</cfscript>
@@ -51,6 +56,9 @@
 					AND #aColumns[k]# = <cfqueryparam value="#arguments.stArguments[aColumns[k]]#" cfsqltype="cf_sql_varchar" />
 				</cfif>
 			</cfloop>
+			<cfif len(queryOrderBy) gt 0 and len(queryOrderByTitle) gt 0>
+				ORDER BY #queryOrderByTitle# #queryOrderBy#
+			</cfif>
 			LIMIT #querylimitBy#
 		</cfquery>
 
@@ -83,10 +91,10 @@
 		<cfquery datasource="#request.dsn#" result="rInserted">
 			INSERT INTO #arguments.type# (#arrayToList(aColumns)#, dtInserted)
 			VALUES (	<cfloop from="1" to="#arrayLen(aColumns)#" index="k">
-							<cfif isNumeric(stArguments[aColumns[k]])>
-								<cfqueryparam value="#stArguments[aColumns[k]]#" cfsqltype="cf_sql_integer" />
+							<cfif isNumeric(arguments.stArguments[aColumns[k]])>
+								<cfqueryparam value="#arguments.stArguments[aColumns[k]]#" cfsqltype="cf_sql_integer" />
 							<cfelse>
-								<cfqueryparam value="#stArguments[aColumns[k]]#" cfsqltype="cf_sql_varchar" />
+								<cfqueryparam value="#arguments.stArguments[aColumns[k]]#" cfsqltype="cf_sql_varchar" />
 							</cfif>
 							,
 						</cfloop>
